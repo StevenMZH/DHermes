@@ -1,0 +1,104 @@
+# Entornos virtuales
+venv/
+.env/
+.venv/
+ENV/
+env.bak/
+env/
+
+# Archivos y carpetas de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Archivos temporales de editores
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+
+# Archivos de log y bases de datos temporales
+*.log
+*.sqlite3
+
+# Archivos de configuración local
+*.env
+*.ini
+*.local
+.settings/
+
+# Compilación C/C++ o extensiones
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.spec
+
+# pytest
+.cache/
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pylint
+pylint-report.txt
+pylint-global.txt
+
+# pyre
+.pyre/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Documentación generada
+docs/_build/
+build/
+site/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de distribución
+*.tar.gz
+*.whl
+
+# Entorno de prueba
+.tox/
+
+# Entradas específicas de tu proyecto
+hermes.egg-info/
+workspace-dev/
+tests/

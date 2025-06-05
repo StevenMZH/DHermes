@@ -1,0 +1,72 @@
+# File Extends
+import?:
+  - ...
+
+# Server Dict
+servers?:
+  # Server
+  <id>:
+    server_name?:
+    credentials: # Must containe either file or the other fields
+      file: ".env.hermes"  
+      project_id: ...
+      vm_name: ...
+      host_address: ...
+      user: ...
+      ssh_key: ...
+    env: <file>
+
+    # Apps
+    apps?:
+      <id>:
+        # Must contain repository+branch and/or images
+        app_name?: 
+        repository?: 
+        branch?: 
+        images?: # in dev
+        - ...
+        services: 
+        events?: 
+        - ...
+
+    # global
+    services?: <server_compose> # no tested
+
+# Events List (interrupt + body)
+events?:
+  # Event (if event_id have interrupt name it's assigned in their when field)
+  <id>:
+    # (interrupts (in dev)): before, before-deploy, after, after-deploy, after-failure, after-sucess, call
+    # (async interrupt (in dev)): (call, async_call, port_<port>)
+    when?: (default=call)
+    
+    # Body (actions & in-time calls)
+    push?: 
+      - from: <path>
+        to: <path=server_root>
+      - ...
+    pull?: 
+      - from: <path=server_path> 
+        to: <path=call_root>   
+      - ...
+    remove?: 
+      - path: <path> # fixing
+      - ...
+    migrate?:  # in dev
+      - from: <path> 
+        to: <path>    
+      - ...
+    
+    call?:
+      - <func>: <scope=self> 
+
+    run_local:
+      - ...
+    run_serverside:
+      - ...
+    
+    # annonymous loop func
+    loop?:
+      break: <event>
+      # ... funcs
+      
