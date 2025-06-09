@@ -1,8 +1,8 @@
-from typing import Dict
-from core.models import Server, App
 import subprocess
-from internal.funcs import remote_access_cmd, run_serverside, run_local, push_data, pull_data, remove_data, server_config
 import click
+from typing import Dict
+from hermes.core.models import Server, App
+from hermes.internal.keys import remote_access_cmd
 
 def push_env_cmd(server:Server, app_name:str):
     remote_path = f"{server.user}@{server.host_address}:/home/{server.user}/{app_name}/.env.dev"

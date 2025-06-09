@@ -83,6 +83,8 @@ pylint-global.txt
 docs/_build/
 build/
 site/
+*.spec 
+*.exe   
 
 # Jupyter Notebooks
 .ipynb_checkpoints
@@ -98,7 +100,14 @@ Thumbs.db
 # Entorno de prueba
 .tox/
 
+# Sensible data
+*.pem
+*.key
+*.crt
+*.env
+secrets/
+
 # Entradas específicas de tu proyecto
 hermes.egg-info/
-workspace-dev/
+workspace_dev/
 tests/

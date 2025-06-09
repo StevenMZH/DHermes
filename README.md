@@ -61,10 +61,10 @@ servers?:
         events?: 
         - ...
 
-    # global
+    # Server service-compose
     services?: <server_compose> # no tested
 
-# Events List (interrupt + body)
+# Event Dict (interrupt + body)
 events?:
 
     # Event
@@ -89,7 +89,7 @@ events?:
         - ...
 
     call?:
-        - <func>: <scope=self> 
+        - <event>: <scope=self> 
 
     run_local:
         - ...

@@ -1,8 +1,9 @@
 import os
 from typing import Dict, List
 import yaml
-from core.models import Server, App, Event
-from core.global_vars import event_funcs, call_conditions
+from hermes.core.models import Server, App, Event
+from hermes.core.global_vars import event_funcs, call_conditions
+from hermes.internal.keys import sshKey_path
 
 def load_hermesfile(path: str) -> dict:
     with open(path, 'r') as file:
@@ -27,13 +28,13 @@ def hermesfile_parser(data: dict) -> dict:
         has_credentials_file = 'server_credentials' in server_info
         has_individual_fields = all(
             field in server_info
-            for field in ['user', 'project_id', 'vm_name', 'host_address', 'ssh_key']
+            for field in ['user', 'project_id', 'vm_name', 'host_address']
         )
-
+        
         if not (has_credentials_file or has_individual_fields):
             raise ValueError(
                 f"'{server_key}' should have server_credentials' "
-                f"or its equivalent fields (user, project_id, vm_name, host_address, ssh_key)"
+                f"or its equivalent fields (user, project_id, vm_name, host_address)"
             )
 
         # Apps
@@ -52,6 +53,10 @@ def hermesfile_parser(data: dict) -> dict:
                 'host_address': server_info['host_address'],
                 'ssh_key': server_info['ssh_key']
             }
+            
+        # SSH Key    
+        if(credentials['ssh_key'] == None):
+            credentials['ssh_key'] = sshKey_path(server_key)
 
         server = Server(
             server_name=server_info.get('server_name', server_key),
@@ -87,7 +92,7 @@ def serverCredentials_parser(env_path: str) -> dict:
             key, value = line.split('=', 1)
             env_vars[key.strip()] = value.strip().strip('"').strip("'")
 
-    required_fields = ['user', 'project_id', 'vm_name', 'host_address', 'ssh_key']
+    required_fields = ['user', 'project_id', 'vm_name', 'host_address']
     missing = [f for f in required_fields if f not in env_vars]
 
     if missing:
@@ -98,7 +103,7 @@ def serverCredentials_parser(env_path: str) -> dict:
         'project_id': env_vars['project_id'],
         'vm_name': env_vars['vm_name'],
         'host_address': env_vars['host_address'],
-        'ssh_key': env_vars['ssh_key']
+        'ssh_key': env_vars.get('ssh_key', None)
     }
 
 

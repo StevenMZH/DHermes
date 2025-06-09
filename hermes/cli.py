@@ -1,25 +1,91 @@
 import click
-from services.deploy import deploy_all, deploy_server, deploy_app
-from services.events import run_event, run_event_list
-from services.getters import get_global_data, get_app
-
+from hermes.services.deploy import deploy_all, deploy_server, deploy_app
+from hermes.services.events import run_event, run_event_list
+from hermes.services.getters import get_global_data, get_app, get_server
+from hermes.services.connect import set_connection, access_server
+from hermes.internal.setup import set_client, set_server, set_manager
 
 @click.group()
 def cli():
     """Hermes CLI - (DOaC) DevOps as Code """
     pass
 
+# Setups
+@cli.command()
+def setup_client():
+    try:
+        set_client()
+    except(Exception):
+        click.echo('Error during the Client Setup')
 
 @cli.command()
-@click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (por defecto: ./hermes.yml)")
+@click.argument('server')
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+def setup_server(hermesfile, server):
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
+    server_data = get_server(parsed_data, server)
+    
+    if not servers_data:
+        click.echo('No server defined')
+        return
+    elif not server_data:
+        click.echo(f'{server} Server not defined')
+        return
+    
+    try:
+        click.echo(f"Setting Up Server (This may take a few minutes) ...")
+        set_server(server_data)
+        click.echo(f"Setup complete. The server is ready to receive deployments.")
+    
+    except Exception as e:
+        click.echo(f"Unexpected error: {e}")
+        
+
+# Connections
+@cli.command()
+@click.argument('server')
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+def connect(server, hermesfile):
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
+    server_data = get_server(parsed_data, server)
+    
+    if not servers_data:
+        click.echo('No server defined')
+        return
+    
+    if (server_data):
+        set_connection(server, server_data)
+    else:
+        click.echo('Define the scope --all, --server or --app, and provide the specific location to run it')
+        
+@cli.command()
+@click.argument('server')
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+def access(server, hermesfile):
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
+    server_data = get_server(parsed_data, server)
+    
+    if not servers_data:
+        click.echo('No server defined')
+        return
+    
+    if (server_data):
+        access_server(server, server_data)
+    else:
+        click.echo('Define the scope --all, --server or --app, and provide the specific location to run it')
+        
+        
+
+@cli.command()
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (por defecto: ./hermes.yml)")
 @click.option('--all', is_flag=True, default=True, help="Deploy all servers and projects.")
 @click.option('--server', default=None, help="Deploy only the specified server.")
 @click.option('--app', default=None, help="Deploy only the specified app_data across all servers.")
-def deploy(hermes_file, all, server, app):
+def deploy(hermesfile, all, server, app):
     """
     Deploy services based on the configuration file.
     """
-    parsed_data, servers_data, events_data = get_global_data(hermes_file)
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
     
     # Specific Server Deploy
@@ -51,13 +117,13 @@ def deploy(hermes_file, all, server, app):
 
 
 @cli.command()
-@click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 @click.option('--all', is_flag=True, default=True, help="Set the scope to Global.")
 @click.option('--server', default=None, help="Set the scope to the specified server.")
 @click.option('--app', default=None, help="Set the scope to the specified app.")
 @click.option('--event', default=None, help="Set the event to call.")
-def run(hermes_file, all, server, app, event):
-    parsed_data, servers_data, events_data = get_global_data(hermes_file)
+def run(hermesfile, all, server, app, event):
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
     
     if server:
@@ -82,11 +148,11 @@ def run(hermes_file, all, server, app, event):
         
         
 @cli.command()
-@click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 @click.option('--server', help="Set the scope to the specified server.")
 @click.option('--event', help="Set the event to call.")
-def call(hermes_file, server, event):
-    parsed_data, servers_data, events_data = get_global_data(hermes_file)
+def call(hermesfile, server, event):
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
     
     if (event and server):
@@ -102,21 +168,21 @@ def call(hermes_file, server, event):
                
     
 @cli.command()
-@click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (por defecto: ./hermes.yml)")
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (por defecto: ./hermes.yml)")
 @click.option('--all', is_flag=True, default=False, help="Run global initialization process.")
 @click.option('--server', default=None, help="Run the specified server initialization process.")
 @click.option('--app', default=None, help="Run the specified app initialization process.")
-def init(hermes_file, all, server, app):
-    run(hermes_file, all, server, app, 'init')
+def init(hermesfile, all, server, app):
+    run(hermesfile, all, server, app, 'init')
 
 
 @cli.command()
-@click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
-def list(hermes_file):
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+def list(hermesfile):
     """
     List all servers on the current configuration.
     """
-    parsed_data, servers, events = get_global_data(hermes_file)
+    parsed_data, servers, events = get_global_data(hermesfile)
     if not servers: return
     servers = parsed_data.get('servers', {})
         
@@ -143,10 +209,10 @@ def list(hermes_file):
 
 
 # @cli.command()
-# @click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+# @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 # @click.option('--servers', is_flag=True, default=False, help="Run global initialization process.")
 # @click.option('--services', default=None, help="Run the specified server initialization process.")
-# def status(hermes_file, servers, services):
+# def status(hermesfile, servers, services):
 #     """
 #     List Servers or its Services status
 #     """
@@ -157,9 +223,9 @@ def list(hermes_file):
 # @cli.command()
 # @click.argument('origin')
 # @click.argument('target')
-# @click.option('--hermes_file', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
-# def migrate(origin, target, hermes_file):
-#     raw_config = load_hermesfile(hermes_file)
+# @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
+# def migrate(origin, target, hermesfile):
+#     raw_config = load_hermesfile(hermesfile)
 #     parsed_data = hermesfile_parser(raw_config)
 #     click.echo(f'{origin} to {target}')
 #     click.echo('Under Development')

@@ -1,6 +1,6 @@
 from typing import Dict, List
 import subprocess
-from core.models import Server, Project
+from hermes.core.models import Server, Project
 
 def migrate(server1: Server, server2:Server, origin_path: list[str], destination_path: str):
     # Create a hermes.migration.yml (Contain instruction to push to destination & delete local files)

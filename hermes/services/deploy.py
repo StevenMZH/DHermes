@@ -1,8 +1,8 @@
 import subprocess
-from typing import Dict, Union
-from core.models import Server, App
-from internal.deploy import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
 import click
+from typing import Dict, Union
+from hermes.core.models import Server, App
+from hermes.internal.app import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
 
 def deploy_all(servers: Dict[str, Server]):
     for server in servers['servers'].values():
@@ -10,20 +10,20 @@ def deploy_all(servers: Dict[str, Server]):
 
 def deploy_server(server: Server):
     # Updating Apps Changes
-    if not server.apps:
+    if server.apps:
         for app_id, app_data in server.apps.items():
             pull_app(server, app_data)
 
-    # Build/Run Global Services
-    if server.services:
-        subprocess.run(remote_access_cmd(server) + run_services_cmd(server.services), shell=False)
+        # Build/Run Global Services
+        if server.services:
+            subprocess.run(remote_access_cmd(server) + run_services_cmd(server.services), shell=False)
 
-    # Run Services
-    else:
-        if server.apps:
-            for app_id, app_data in server.apps.items():
-                if app_data.services:
-                    run_services(server, app_data, app_id)
+        # Run Services
+        else:
+            if server.apps:
+                for app_id, app_data in server.apps.items():
+                    if app_data.services:
+                        run_services(server, app_data, app_id)
 
 
 def deploy_app(server:Server, app: App):

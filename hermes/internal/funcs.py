@@ -2,12 +2,11 @@ from typing import Dict, List
 import os
 import click
 import subprocess
-from core.models import Server, App
-
-def remote_access_cmd(server:Server):
-    return ["ssh", "-i", server.ssh_key, f"{server.user}@{server.host_address}"]
-    
+from hermes.core.models import Server, App
+ 
 def run_serverside(server: Server, commands: List[str]):
+    from hermes.internal.keys import remote_access_cmd
+    
     command_str = " && ".join(commands)
     ssh_cmd = remote_access_cmd(server) + [command_str]
     result = subprocess.run(ssh_cmd, capture_output=True, text=True)
@@ -17,7 +16,7 @@ def run_serverside(server: Server, commands: List[str]):
 
 def run_local(commands: List[str]):
     command_str = " && ".join(commands)
-    result = subprocess.run(command_str, capture_output=True, text=True, shell=True)
+    result = subprocess.run(command_str, check=True, capture_output=True, text=True, shell=True)
     click.echo(f"(local): {result.stdout}")
     if result.stderr:
         click.echo(f"(local): {result.stderr}")

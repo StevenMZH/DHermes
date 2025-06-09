@@ -1,10 +1,10 @@
 import subprocess
 from typing import Dict, List, Union
-from core.models import Server, App, Event
-from internal.deploy import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
-from core.global_vars import event_funcs, call_conditions
-from internal.funcs import server_config, push_data, pull_data, remove_data, run_local, run_serverside
-from internal.parser import load_hermesfile, hermesfile_parser
+from hermes.core.models import Server, App, Event
+from hermes.core.global_vars import event_funcs, call_conditions
+from hermes.internal.app import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
+from hermes.internal.funcs import server_config, push_data, pull_data, remove_data, run_local, run_serverside
+from hermes.internal.parser import load_hermesfile, hermesfile_parser
 
 
 # Get Servers/Events
@@ -36,7 +36,7 @@ def get_server(parsed_file: Dict, server_id:str) -> Server:
     if(servers):
         for id, server_data in servers.items():
             if(id == server_id):
-                return servers         
+                return server_data    
     return None
     
 def get_apps(servers: Dict[str, Server]) -> List[App]:

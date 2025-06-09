@@ -29,10 +29,10 @@ servers?:
         events?: 
         - ...
 
-    # global
+    # server servicer-compose
     services?: <server_compose> # no tested
 
-# Events List (interrupt + body)
+# Events Dict (interrupt + body)
 events?:
   # Event (if event_id have interrupt name it's assigned in their when field)
   <id>:
@@ -58,7 +58,7 @@ events?:
       - ...
     
     call?:
-      - <func>: <scope=self> 
+      - <event>: <scope=self> 
 
     run_local:
       - ...

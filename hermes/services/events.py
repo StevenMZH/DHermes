@@ -1,9 +1,9 @@
 import subprocess
 from typing import Dict, List
-from core.models import Server, App, Event
-from internal.deploy import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
-from core.global_vars import event_funcs, call_conditions
-from internal.funcs import server_config, push_data, pull_data, remove_data, run_local, run_serverside
+from hermes.core.global_vars import event_funcs, call_conditions
+from hermes.core.models import Server, App, Event
+from hermes.internal.app import remote_access_cmd, pull_app, run_services_cmd, push_env_cmd
+from hermes.internal.funcs import server_config, push_data, pull_data, remove_data, run_local, run_serverside
 import click
 from .getters import get_server
 

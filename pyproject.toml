@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hermes-deployer"
+version = "0.3.0"
+description = "Multi-Server, Multi-App, Multi-Service Orchestrator."
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT" }
+authors = [
+  { name = "Steven Mendoza" }
+]
+keywords = ["DevOps", "deployment", "infrastructure-as-code", "yaml", "multi-server", "automation"]
+
+dependencies = [
+  "bcrypt==4.3.0",
+  "cffi==1.17.1",
+  "click==8.2.1",
+  "colorama==0.4.6",
+  "cryptography==45.0.2",
+  "dotenv==0.9.9",
+  "paramiko==3.5.1",
+  "pycparser==2.22",
+  "PyNaCl==1.5.0",
+  "python-dotenv==1.1.0",
+  "PyYAML==6.0.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/StevenMZH/DHermes.git"
+Documentation = "https://github.com/StevenMZH/DHermes.git"
+Source = "https://github.com/StevenMZH/DHermes.git"
+Issues = "https://github.com/StevenMZH/DHermes.git/issues"
+
+[project.scripts]
+hermes = "hermes.cli:main"
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "docs*", "workspace_dev*", "venv*"]
