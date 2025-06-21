@@ -13,6 +13,9 @@ def cli():
 # Setups
 @cli.command()
 def setup_client():
+    """
+    Set up local host as a Client, prepares the workspace for setting DevOps & Server management 
+    """
     try:
         set_client()
     except(Exception):
@@ -22,6 +25,9 @@ def setup_client():
 @click.argument('server')
 @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 def setup_server(hermesfile, server):
+    """
+    Set up remote host as a Server, prepares the workspace to host multiple apps & services
+    """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     server_data = get_server(parsed_data, server)
     
@@ -46,6 +52,9 @@ def setup_server(hermesfile, server):
 @click.argument('server')
 @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 def connect(server, hermesfile):
+    """
+    Set up connection between the Local Client and a Server
+    """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     server_data = get_server(parsed_data, server)
     
@@ -62,6 +71,9 @@ def connect(server, hermesfile):
 @click.argument('server')
 @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 def access(server, hermesfile):
+    """
+    Access via SSH to a Server 
+    """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     server_data = get_server(parsed_data, server)
     
@@ -83,7 +95,7 @@ def access(server, hermesfile):
 @click.option('--app', default=None, help="Deploy only the specified app_data across all servers.")
 def deploy(hermesfile, all, server, app):
     """
-    Deploy services based on the configuration file.
+    Deploy servers/apps/services based on the configuration file.
     """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
@@ -123,6 +135,9 @@ def deploy(hermesfile, all, server, app):
 @click.option('--app', default=None, help="Set the scope to the specified app.")
 @click.option('--event', default=None, help="Set the event to call.")
 def run(hermesfile, all, server, app, event):
+    """
+    Run Event from the specified scope 
+    """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
     
@@ -152,6 +167,9 @@ def run(hermesfile, all, server, app, event):
 @click.option('--server', help="Set the scope to the specified server.")
 @click.option('--event', help="Set the event to call.")
 def call(hermesfile, server, event):
+    """
+    Run Event inside the specified scope 
+    """
     parsed_data, servers_data, events_data = get_global_data(hermesfile)
     if not servers_data: return
     
@@ -180,7 +198,7 @@ def init(hermesfile, all, server, app):
 @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")
 def list(hermesfile):
     """
-    List all servers on the current configuration.
+    List all Hermes Objects (Servers, Apps, Events) on the current configuration.
     """
     parsed_data, servers, events = get_global_data(hermesfile)
     if not servers: return
