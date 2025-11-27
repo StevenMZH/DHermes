@@ -127,6 +127,47 @@ def deploy(hermesfile, all, server, app):
     else:
         click.echo("No deployment target specified. Use --all, --server or --app.")
 
+'''
+@cli.command()
+@click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (por defecto: ./hermes.yml)")
+@click.option('--all', is_flag=True, default=True, help="Deploy all servers and projects.")
+@click.option('--server', default=None, help="Deploy only the specified server.")
+@click.option('--app', default=None, help="Deploy only the specified app_data across all servers.")
+def deploy(hermesfile, all, server, app):
+    """
+    Deploy servers/apps/services based on the configuration file.
+    """
+    parsed_data, servers_data, events_data = get_global_data(hermesfile)
+    if not servers_data: return
+    
+    # Specific Server Deploy
+    if server:        
+        servers_data = servers_data.get(server, None)
+        if not servers_data:
+            click.echo(f"Server {server} not found")
+            return
+
+        click.echo(f"Deploying server: {server}")
+        deploy_server(servers_data)
+              
+    # Specific App Deploy
+    elif app:
+        appHost, appHost_data, app_id, app_data  =  get_app(servers_data, app)
+        if app_data:
+            click.echo(f"Deploying App: {app}")
+            deploy_app(appHost_data, app_data)
+            return
+
+        click.echo(f"App not found: {server}")
+                   
+    # Default: Deploy All
+    elif all:
+        click.echo("Deploying all servers and apps")
+        deploy_all(parsed_data)
+    else:
+        click.echo("No deployment target specified. Use --all, --server or --app.")
+'''
+
 
 @cli.command()
 @click.option('--hermesfile', default='hermes.yml', type=click.Path(exists=True), help="Path to hermes.yml file (def: ./hermes.yml)")

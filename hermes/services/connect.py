@@ -4,8 +4,9 @@ from click import echo, prompt
 from hermes.core.models import Server
 from hermes.internal.keys import sshKey_path, set_keys
 
-def transfer_keys(ssh_path: str, server_name: str, server: Server):
-    zone = prompt('Zone: ')
+def transfer_keys(ssh_path: str, server_name: str, server: Server, zone:str=None):
+    if(not zone):
+        zone = prompt('Zone: ')
 
     with open(ssh_path + ".pub", "r") as f:
         pub_key = f.read().strip()
@@ -36,9 +37,9 @@ def transfer_keys(ssh_path: str, server_name: str, server: Server):
 
 
 
-def set_connection(server_name:str, server: Server, provider: str = 'GCP'):
+def set_connection(server_name:str, server: Server, zone:str=None, provider: str = 'GCP'):
     ssh_path = set_keys(server_name)
-    transfer_keys(ssh_path, server_name, server)
+    transfer_keys(ssh_path, server_name, server, zone)
     
     
 
